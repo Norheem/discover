@@ -89,152 +89,207 @@ class _CartItemState extends State<CartItem> {
                 ],
               ),
               const SizedBox(
-                height: 5,
+                height: 10,
               ),
-              Expanded(
-                child: Consumer<CartModel>(
-                  builder: (context, cart, child) {
-                    return ListView.builder(
+              Consumer<CartModel>(
+                builder: (context, cart, child) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: ListView.builder(
                       itemCount: cart.cartItem.length,
                       itemBuilder: (context, index) {
-                        // Access each cart item from cart.cartItem[index]
                         Map<String, dynamic> item = cart.cartItem[index];
+
                         return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Color.fromARGB(64, 158, 158, 158),
-                            ),
-                          ),
-                          child: ListTile(
-                            leading: Container(
-                              height: 500,
-                              width: 80,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(37, 158, 158, 158),
-                              ),
-                              child: Image.asset(
-                                item['image'][0],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Text(item['name']),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item['size'][0],
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          width: 400,
+                          height: 150,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Image Container
+                                  Container(
+                                    width: 120,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: const Color.fromARGB(
+                                          37, 158, 158, 158),
+                                    ),
+                                    child: Image.asset(
+                                      item['image'][0],
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '\$${(double.parse(item['price']) * (cart.cartItem[index]['quantity'] ?? 1)).toStringAsFixed(2)}',
-                                      style: GoogleFonts.roboto(
-                                        textStyle: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    const Spacer(),
-
-                                    Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(
-                                        child: IconButton(
-                                          onPressed: () {
-                                            var cart = Provider.of<CartModel>(
-                                                context,
-                                                listen: false);
-                                            if (cart.cartItem[index]
-                                                    ['quantity'] >
-                                                1) {
-                                              cart.decrementQuantity(index);
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      'Quantity can\'t be less than 1'),
+                                  const SizedBox(width: 20),
+                                  // Expanded Column for text and icons
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Row for name and cancel icon
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Text for name
+                                            Text(
+                                              item['name'],
+                                              style: GoogleFonts.roboto(
+                                                textStyle: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 15,
                                                 ),
-                                              );
-                                            }
-                                          },
-                                          icon: const Icon(Icons.remove),
-                                          padding: EdgeInsets.zero,
-                                          alignment: Alignment.center,
+                                              ),
+                                            ),
+                                            // Cancel icon
+                                            IconButton(
+                                              onPressed: () {
+                                                Provider.of<CartModel>(context,
+                                                        listen: false)
+                                                    .removeItemFromCart(index);
+                                              },
+                                              icon: const Icon(Icons.cancel),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-
-                                    Text(
-                                      (cart.cartItem[index]['quantity'] ?? 1)
-                                          .toString(),
-                                      style: GoogleFonts.roboto(
-                                        textStyle: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
+                                        // Text for size
+                                        Text(
+                                          item['size'][0],
+                                          style: GoogleFonts.roboto(
+                                            textStyle: const TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 15,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ), //
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-
-                                    Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(
-                                        child: IconButton(
-                                          onPressed: () {
-                                            cart.incrementQuantity(index);
-                                          },
-                                          icon: const Icon(Icons.add),
-                                          padding: EdgeInsets.zero,
-                                          alignment: Alignment.center,
+                                        // Row for price, quantity, and icons
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Text for price
+                                            Text(
+                                              '\$${(double.parse(item['price']) * (cart.cartItem[index]['quantity'] ?? 1)).toStringAsFixed(2)}',
+                                              style: GoogleFonts.roboto(
+                                                textStyle: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                            // Icons for quantity adjustment
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      var cart = Provider.of<
+                                                              CartModel>(
+                                                          context,
+                                                          listen: false);
+                                                      if (cart.cartItem[index]
+                                                              ['quantity'] >
+                                                          1) {
+                                                        cart.decrementQuantity(
+                                                            index);
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content: Text(
+                                                                'Quantity can\'t be less than 1'),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.remove),
+                                                    padding: EdgeInsets.zero,
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                    width:
+                                                        10), // Add some spacing between the icons
+                                                Text(
+                                                  (cart.cartItem[index]
+                                                              ['quantity'] ??
+                                                          1)
+                                                      .toString(),
+                                                  style: GoogleFonts.roboto(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                    width:
+                                                        10), // Add some spacing between the icons
+                                                Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      cart.incrementQuantity(
+                                                          index);
+                                                    },
+                                                    icon: const Icon(Icons.add),
+                                                    padding: EdgeInsets.zero,
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {
-                                Provider.of<CartModel>(context, listen: false)
-                                    .removeItemFromCart(index);
-                              },
-                              icon: const Icon(Icons.cancel),
-                            ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              // Divider
+                              Container(
+                                width: double.infinity,
+                                height: 1,
+                                color: const Color.fromARGB(164, 158, 158, 158),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                              ),
+                            ],
                           ),
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(
                 height: 5,
